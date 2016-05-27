@@ -41,3 +41,11 @@ post '/new' do
 		redirect to '/'
     end
 end
+
+get '/details/:post_id' do
+  post_id = params[:post_id]
+	results = @db.execute 'SELECT * FROM Posts where id = ?',[post_id]
+  @row = results[0]
+
+  erb :details
+end
