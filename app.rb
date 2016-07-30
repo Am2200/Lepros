@@ -2,35 +2,20 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/reloader'
-require 'sqlite3'
-
-def init_db
-	@db = SQLite3::Database.new 'Leprosorium.db'
-	@db.results_as_hash = true
-end
+require 'sinatra/activerecord'
 
 configure do
-  init_db
-	@db.execute 'CREATE TABLE IF NOT EXISTS Posts (
-								id           INTEGER PRIMARY KEY AUTOINCREMENT,
-								created_date DATE,
-								content      TEXT
-							);'
-
-	@db.execute 'CREATE TABLE IF NOT EXISTS Comments (
-								id           INTEGER PRIMARY KEY AUTOINCREMENT,
-								created_date DATE,
-								content      TEXT,
-								post_id			 INTEGER
-							);'
+  set :database, "sqlite3:Leprosorium.db"
 end
 
-before do
-  init_db
+class Post < ActiveRecord::Base
+end
+
+class Comment < ActiveRecord::Base
 end
 
 get '/' do
-  @results = @db.execute 'SELECT * FROM Posts ORDER BY id desc'
+  @posts = Post.all
 	erb :index
 end
 
@@ -39,14 +24,9 @@ get '/new' do
 end
 
 post '/new' do
-	content = params[:content]
-  if content.length <= 0
-    @error = 'Type post text'
-    return erb :new
-  else
-    @db.execute 'INSERT INTO Posts (content, created_date) VALUES (?, datetime())', [content]
-		redirect to '/'
-    end
+  newPost = Post.new params[:post]
+  newPost.save
+  erb :index
 end
 
 get '/details/:post_id' do
