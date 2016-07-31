@@ -27,6 +27,7 @@ end
 post '/new' do
   newPost = Post.new params[:post]
   newPost.save
+  @error = newPost.errors.full_messages.first
   redirect to ('/posts')
 end
 
