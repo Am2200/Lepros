@@ -9,9 +9,11 @@ configure do
 end
 
 class Post < ActiveRecord::Base
+  validates :content, presence: true, length: {minimum: 1}
 end
 
 class Comment < ActiveRecord::Base
+  validates :comment, presence: true, length: {minimum: 1}
 end
 
 get '/' do
@@ -37,7 +39,6 @@ get '/details/:post_id' do
   post_id = params[:post_id]
   @post = Post.find post_id
   @comments = Comment.where("idPost = ?", post_id)
-  #@lastComment = Comment.last
   erb :details
 end
 
