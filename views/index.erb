@@ -1,4 +1,4 @@
 <h2>Latest posts:</h2>
 <% @posts.each do |post| %>
-<%= post.content %>
+<a href="/details/<%= post.id %>"><%= post.content %></a><br/>
 <% end %>
